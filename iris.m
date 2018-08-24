@@ -4,7 +4,7 @@ fprintf('Loading Data ...\n');
 input_layer_size  = 4;  
 num_labels = 3;  
 
-%step 1: get the ddata set
+%step 1: get the data set
 data = load('irisdata.txt');
 
 %load into matrices
@@ -12,13 +12,15 @@ data = load('irisdata.txt');
 X = data(:, 1:b-1);
 x = data(:,1:2);
 y = data(:, b);
-m = size(X, 1);
-n = size(X, 2);
+y1 = [ones(50,1);zeros(100,1)];
+y1 = [zeros(50,1);ones(50,1);zeros(50,1)];
+y3 = [zeros(100,1);ones(50,1)];
+
 fprintf('Program paused. Press enter to continue.\n');
 pause;
 
 %Plotting
-plotdata(x,y);
+plotData3(x,y);
 hold on;
 xlabel('sepal length');
 ylabel('sepal width');
@@ -27,49 +29,34 @@ hold off;
 fprintf('\nProgram paused. Press enter to continue.\n');
 pause;
 
-% Vectorize Logistic Regression
-fprintf('For lambda = 0\n');
 
-lambda = 0;
-[all_theta] = oneVsAll(X, y, num_labels, lambda);
+% Step 3: Compute Cost and gradient
+[m,n] = size(X);
 
-fprintf('Program paused. Press enter to continue.\n');
+X = [ones(m,1) X];
+init_theta = zeros(n+1,1);
+[cost, grad] = costFunction(init_theta, X, y1);
+
+fprintf('Cost at initial theta(0) for y1:%f\n', cost);
+fprintf('Gradient at initial theta(zeroes) for y1: \n%f\n', grad);
+fprintf('\nProgram paused press ENTER to continue\n');
 pause;
 
-% Step 3: Predict for One-Vs-All 
-
-pred = predictOneVsAll(all_theta, X);
-fprintf('\nTraining Set Accuracy: %f\n', mean(double(pred == y)) * 100);
-pause;
-
-% Vectorize Logistic Regression
-
-fprintf('\nTraining One-vs-All Logistic Regression...\n')
-fprintf('For lambda = 2\n');
-
-lambda = 2;
-[all_theta] = oneVsAll(X, y, num_labels, lambda);
-
-fprintf('Program paused. Press enter to continue.\n');
-pause;
-initial_theta = zeros(n + 1, 1);
-
-options = optimset('GradObj', 'on', 'MaxIter', 150);
-
-[theta, cost] = fminunc(@(t)(costFunction(t, X, y)), initial_theta, options);
-% NOTE: that by using fminunc, you do not have to write any loops yourself,
-% or set a learning rate like you did for gradient descent. You ONLY need
-% to provide a function calculating the cost and the gradient.
-
-% Print theta to screen
-fprintf('Cost at theta found by fminunc: %f\n', cost);
+% Step 4: Optimising using fminunc
+options = optimset('GradObj', 'on', 'MaxIter', 400);
+[theta, cost] = ...
+        fminunc(@(t)(costFunction(t, X, y1)), init_theta, options);
+fprintf('Cost at theta found by fminunc y1: %f\n', cost);
 fprintf('theta: \n');
 fprintf(' %f \n', theta);
 
-plotDecisionBoundary(theta, X, y);
-
-pred = predictOneVsAll(all_theta, X);
-fprintf('\nTraining Set Accuracy: %f\n', mean(double(pred == y)) * 100);
-
-fprintf('Program paused. Press enter to continue.\n');
+% Step 5: Plot Boundary
+plotDecisionBoundary(theta, X, y1);
 pause;
+
+
+
+
+
+
+

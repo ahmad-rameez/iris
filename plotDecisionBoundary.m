@@ -9,7 +9,7 @@ function plotDecisionBoundary(theta, X, y)
 %   2) MxN, N>3 matrix, where the first column is all-ones
 
 % Plot Data
-plotData(X(:,2:3), y);
+plotData2(X(:,2:3), y);
 hold on
 
 if size(X, 2) <= 3
@@ -23,7 +23,7 @@ if size(X, 2) <= 3
     plot(plot_x, plot_y)
     
     % Legend, specific for the exercise
-    legend('Admitted', 'Not admitted', 'Decision Boundary')
+    legend('Setosa', 'Not-setosa', 'Decision Boundary')
     axis([30, 100, 30, 100])
 else
     % Here is the grid range
